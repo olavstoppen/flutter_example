@@ -1,0 +1,6 @@
+package com.detoxer.apps.flutter_example
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
