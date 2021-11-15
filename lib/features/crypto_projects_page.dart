@@ -45,7 +45,14 @@ class _CryptoProjectsPageState extends State<CryptoProjectsPage> {
             );
           }
 
-          final List<Project> projects = snapshot.data!;
+          final List<Project> projects = snapshot.data ?? [];
+
+          if(projects.isEmpty) {
+            return const Center(
+              child: Text("No projects available"),
+            );
+          }
+
           return ListView.separated(
             itemCount: projects.length,
             padding: const EdgeInsets.only(top: 16.0),

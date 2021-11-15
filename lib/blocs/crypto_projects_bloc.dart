@@ -6,13 +6,12 @@ import 'package:rxdart/rxdart.dart';
 
 class CryptoProjectsBloc with ErrorMixin {
 
+  late PublishSubject<List<Project>> _projectSubject;
+  Stream<List<Project>> get projectsStream => _projectSubject.stream;
+
   CryptoProjectsBloc() {
     _projectSubject = PublishSubject<List<Project>>();
   }
-  
-  Stream<List<Project>> get projectsStream => _projectSubject.stream;
-  
-  late PublishSubject<List<Project>> _projectSubject;
 
   void fetchCryptoProjects() async {
     final res = await RequestMaker.instance.get("https://detoxer.github.io/neo_hub_json_store/json/projects/platform_projects.json");
