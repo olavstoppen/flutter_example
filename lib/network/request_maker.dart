@@ -7,7 +7,6 @@ class RequestMaker {
   static RequestMaker instance = RequestMaker();
 
   final Dio _dio;
-
   RequestMaker()
       : _dio = Dio(BaseOptions(headers: {
           'Accept': 'application/json',
