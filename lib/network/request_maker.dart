@@ -1,45 +1,46 @@
 import 'dart:io';
-import 'dart:convert';
 
-import 'package:http/http.dart' as http;
-
+import 'package:dio/dio.dart';
 import 'package:flutter_example/domain/response/request_response.dart';
 
 class RequestMaker {
-
   static RequestMaker instance = RequestMaker();
 
-  final JsonDecoder decoder = const JsonDecoder();
+  final Dio _dio;
 
-  final Map<String, String> defaultHeaders = {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-  };
+  RequestMaker()
+      : _dio = Dio(BaseOptions(headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }));
 
   Future<RequestResponse> get(String url, {Map<String, String>? headers}) async {
     try {
-      final response = await http.get(
-          Uri.parse(url),
-          headers: headers ?? defaultHeaders);
+      final Response response = await _dio.get(
+        url,
+        options: Options(
+          responseType: ResponseType.json,
+        ),
+      );
+
       return handleResponse(response);
     } catch (e) {
       return createErrorFromException('GET', e as Exception);
     }
   }
 
-  RequestResponse handleResponse(http.Response response) {
-    final code = response.statusCode;
+  RequestResponse handleResponse(Response response) {
+    final code = response.statusCode ?? 500;
     if (code == 200) {
-      final body = response.body;
-      final resp = decoder.convert(body);
+      final body = response.data;
       return RequestResponse(
         code,
-        resp ?? <String, dynamic>{},
+        body ?? <String, dynamic>{},
       );
     } else {
       return createError(
-        response.statusCode,
-        response.reasonPhrase ?? "Something went wrong",
+        code,
+        response.statusMessage ?? "Something went wrong",
       );
     }
   }
