@@ -1,7 +1,7 @@
 import 'package:flutter_example/domain/response/projects_response.dart';
 import 'package:flutter_example/domain/response/request_response.dart';
 import 'package:flutter_example/network/request_maker.dart';
-import 'package:flutter_example/service/urls.dart';
+import 'package:flutter_example/network/urls.dart';
 
 class CryptoProjectService {
   static CryptoProjectService instance = CryptoProjectService();
