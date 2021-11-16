@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_example/blocs/crypto_projects_bloc.dart';
@@ -7,6 +10,8 @@ import 'package:flutter_example/features/crypto_project_details_page.dart';
 import 'package:flutter_example/features/widgets/error_message_widget.dart';
 import 'package:flutter_example/features/widgets/loading_indicator.dart';
 import 'package:flutter_example/features/widgets/projects_list_item.dart';
+import 'package:flutter_example/navigation/app_navigator.dart';
+import 'package:flutter_example/navigation/app_routes.dart';
 
 class CryptoProjectsPage extends StatefulWidget {
   const CryptoProjectsPage({Key? key}) : super(key: key);
@@ -15,7 +20,7 @@ class CryptoProjectsPage extends StatefulWidget {
   State<CryptoProjectsPage> createState() => _CryptoProjectsPageState();
 }
 
-class _CryptoProjectsPageState extends State<CryptoProjectsPage> {
+class _CryptoProjectsPageState extends State<CryptoProjectsPage> with BeamerMixin {
   final CryptoProjectsBloc _block = CryptoProjectsBloc();
 
   @override
@@ -55,16 +60,9 @@ class _CryptoProjectsPageState extends State<CryptoProjectsPage> {
   }
 
   void _clickedProject(Project project) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return CryptoProjectDetailsPage(
-            key: const Key("crypto_projects_details_page"),
-            project: project,
-          );
-        },
-      ),
-    );
+    JsonEncoder encoder = const JsonEncoder();
+    final String data = encoder.convert(project.toJson());
+    beamTo(AppRoutes.projectDetails, payload: {"data":data});
   }
 
   @override

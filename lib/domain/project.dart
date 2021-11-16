@@ -23,4 +23,14 @@ class Project {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String,dynamic>{};
+    data["name"] = name;
+    data["description"] = description;
+    data["thumbnail"] = thumbnail;
+    data["banner"] = banner;
+
+    return data;
+  }
+
 }
