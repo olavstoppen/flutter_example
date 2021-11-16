@@ -10,7 +10,8 @@ class CryptoProjectDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Details"),
+        key: const Key("app_bar_key"),
+        title: const Text("Detail"),
       ),
       body: _body(),
     );

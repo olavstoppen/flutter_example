@@ -4,6 +4,7 @@ import 'package:flutter_example/blocs/crypto_projects_bloc.dart';
 import 'package:flutter_example/domain/project.dart';
 import 'package:flutter_example/domain/stream_object.dart';
 import 'package:flutter_example/features/crypto_project_details_page.dart';
+import 'package:flutter_example/features/widgets/error_message_widget.dart';
 import 'package:flutter_example/features/widgets/loading_indicator.dart';
 import 'package:flutter_example/features/widgets/projects_list_item.dart';
 
@@ -44,7 +45,7 @@ class _CryptoProjectsPageState extends State<CryptoProjectsPage> {
         final project = projects[index];
         return ProjectListItem(
           project: project,
-          onPressed: _clickedProject,
+          onPressed: (project) => _clickedProject(project),
           key: Key(
             project.name,
           ),
@@ -72,27 +73,39 @@ class _CryptoProjectsPageState extends State<CryptoProjectsPage> {
       appBar: AppBar(
         title: const Text("Crypto projects"),
       ),
-      body: StreamBuilder<StreamListObject<Project>>(
-        stream: _block.projectsStream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return const PlatformLoadingIndicator();
-          final data = snapshot.requireData;
-          switch (data.state) {
-            case StreamObjectState.error:
-              return Center(
-                child: Text(data.errorMessage),
-              );
-            case StreamObjectState.loading:
-              return const PlatformLoadingIndicator();
-            case StreamObjectState.success:
-              return SafeArea(
-                child: _projectsList(
-                  data.payload,
-                ),
-              );
-          }
-        },
-      ),
+      body: _body(),
     );
+  }
+
+  Widget _body() {
+    return StreamBuilder<StreamListObject<Project>>(
+      stream: _block.projectsStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const PlatformLoadingIndicator();
+        final StreamListObject<Project> data = snapshot.requireData;
+        switch (data.state) {
+          case StreamObjectState.error:
+            return ErrorMessageWidget(
+              key: const Key("error_message_jey"),
+              errorMessage: data.errorMessage,
+              onPressed: () {
+                _retry();
+              },
+            );
+          case StreamObjectState.loading:
+            return const PlatformLoadingIndicator();
+          case StreamObjectState.success:
+            return SafeArea(
+              child: _projectsList(
+                data.payload,
+              ),
+            );
+        }
+      },
+    );
+  }
+
+  void _retry() {
+    _block.retry();
   }
 }

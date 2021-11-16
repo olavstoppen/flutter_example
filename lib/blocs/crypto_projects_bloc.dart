@@ -41,4 +41,14 @@ class CryptoProjectsBloc with ErrorMixin {
   void dispose() {
     _projectSubject.close();
   }
+
+  void retry() {
+    _projectSubject.sink.add(
+      const StreamListObject(
+        state: StreamObjectState.loading,
+        payload: [],
+      ),
+    );
+    fetchCryptoProjects();
+  }
 }
