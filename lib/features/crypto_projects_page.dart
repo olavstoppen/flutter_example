@@ -16,7 +16,8 @@ class CryptoProjectsPage extends StatefulWidget {
 
 class _CryptoProjectsPageState extends State<CryptoProjectsPage> {
   final CryptoProjectsBloc _block = CryptoProjectsBloc();
-
+  TextEditingController editingController = TextEditingController();
+  List<Project> filteredProjects = [];
   @override
   void initState() {
     super.initState();
@@ -68,9 +69,31 @@ class _CryptoProjectsPageState extends State<CryptoProjectsPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Crypto projects"),
+        title: Container(
+          width: double.infinity,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.white,borderRadius: BorderRadius.circular(5)
+          ),
+          child: Center(
+            child: TextField(
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search,),
+                hintText: 'Search...',
+
+              ),
+          onChanged: (value){
+            setState(() {
+            _block.searchProjects(value.toLowerCase());
+            });
+          },
+              controller: editingController,
+            ),
+          ),
+        )
       ),
       body: StreamBuilder<StreamListObject<Project>>(
         stream: _block.projectsStream,
@@ -95,4 +118,8 @@ class _CryptoProjectsPageState extends State<CryptoProjectsPage> {
       ),
     );
   }
+
+
 }
+
+

@@ -9,6 +9,8 @@ class CryptoProjectsBloc with ErrorMixin {
   final BehaviorSubject<StreamListObject<Project>> _projectSubject;
 
   Stream<StreamListObject<Project>> get projectsStream => _projectSubject.stream;
+  List<Project> projects = [];
+  List<Project> filteredProjects = [];
 
   CryptoProjectsBloc()
       : _projectSubject = BehaviorSubject<StreamListObject<Project>>.seeded(
@@ -21,6 +23,7 @@ class CryptoProjectsBloc with ErrorMixin {
   void fetchCryptoProjects() async {
     final ProjectsResponse cryptoRes = await CryptoProjectService.instance.getCryptoProjects();
     if (isSuccessful(cryptoRes)) {
+      projects = cryptoRes.projects;
       _projectSubject.sink.add(
         StreamListObject(
           state: StreamObjectState.success,
@@ -36,6 +39,26 @@ class CryptoProjectsBloc with ErrorMixin {
         ),
       );
     }
+  }
+
+   searchProjects(String search) {
+    if(search.isEmpty) {
+      _projectSubject.sink.add(
+        StreamListObject(
+          state: StreamObjectState.success,
+          payload: projects,
+        ),
+      );
+    }else{
+      filteredProjects = projects.where((element) => element.name.toLowerCase().startsWith(search)).toList();
+      _projectSubject.sink.add(
+        StreamListObject(
+          state: StreamObjectState.success,
+          payload: filteredProjects,
+        ),
+      );
+    }
+
   }
 
   void dispose() {
